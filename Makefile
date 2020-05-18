@@ -1,8 +1,13 @@
 # Image URL to use all building/pushing image targets
 CRD_GROUP ?= dex.betssongroup.com
-IMG ?= "localhost:5000/dex-operator:latest"
+IMG ?= "quay.io/betsson-oss/dex-operator"
+TAG=$(shell git symbolic-ref -q --short HEAD)
+GIT_SHA1=$(shell git rev-parse -q HEAD)
+BUILD_DATE=$(shell date +%FT%T%Z)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
 CRD_OPTIONS ?= "crd:trivialVersions=true"
+OS=$(shell go env GOOS)
+ARCH=$(shell go env GOARCH)
 
 # Kind
 KIND_NAME ?= dex
@@ -21,6 +26,15 @@ GOBIN=$(shell go env GOBIN)
 endif
 
 all: manager
+
+# Install kubebuilder
+kubebuilder:
+	# download kubebuilder and extract it to tmp
+	curl -L https://go.kubebuilder.io/dl/2.3.1/${OS}/${ARCH} | tar -xz -C /tmp/
+	# move to a long-term location and put it on your path
+	# (you'll need to set the KUBEBUILDER_ASSETS env var if you put it somewhere else)
+	sudo mkdir -p /usr/local/kubebuilder
+	sudo mv /tmp/kubebuilder_2.3.1_${OS}_${ARCH}/* /usr/local/kubebuilder
 
 # Run tests
 test: generate fmt vet manifests
@@ -43,8 +57,10 @@ uninstall: manifests
 	kustomize build config/crd | kubectl delete -f -
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests deploy-dex
-	cd config/manager && kustomize edit set image controller=${IMG}
+deploy: manifests
+	cd config/manager && \
+		kustomize edit set image controller=${IMG}:${TAG} && \
+		kustomize edit add annotation -f app.kubernetes.io/version:${TAG}
 	kustomize build config/default | kubectl apply -f -
 
 # Generate manifests e.g. CRD, RBAC etc.
@@ -65,11 +81,15 @@ generate: controller-gen
 
 # Build the docker image
 docker-build: test
-	docker build . -t ${IMG}
+	docker build --build-arg SOURCE_COMMIT=${GIT_SHA1} --build-arg BUILD_DATE=${BUILD_DATE} . -t ${IMG}:${TAG}
 
 # Push the docker image
-docker-push: kind-registry
-	docker push ${IMG}
+docker-push:
+	docker push ${IMG}:${TAG}
+ifeq ($(TAG),master)
+	docker tag ${IMG}:${TAG}  ${IMG}:latest
+	docker push ${IMG}:latest
+endif
 
 kind-registry:
 	set -o errexit ;\
@@ -111,7 +131,11 @@ deploy-cert-manager: deploy-ingress
 		cd contrib/charts/cert-manager && helm install cert-manager --namespace cert-manager --version v0.15.0 --set installCRDs=true . ;\
 	fi
 
-deploy-dex: deploy-cert-manager
+deploy-prometheus-operator:
+	@kind export kubeconfig --name $(KIND_NAME)
+	kubectl apply -f contrib/static/prometheus-operator/bundle.yaml
+
+deploy-dex: deploy-prometheus-operator deploy-cert-manager
 	kind export kubeconfig --name $(KIND_NAME) && \
 	kubectl apply -f contrib/static/dex/ns.yaml && \
 	if ! helm list -n dex --deployed -q|grep -q dex; then \
