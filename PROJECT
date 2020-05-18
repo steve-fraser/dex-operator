@@ -1,0 +1,7 @@
+domain: betssongroup.com
+repo: bitbucketsson.betsson.local/scm/iac/dex-operator
+resources:
+- group: dex
+  kind: Client
+  version: v1
+version: "2"

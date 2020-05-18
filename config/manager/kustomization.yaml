@@ -1,0 +1,11 @@
+resources:
+- manager.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+- name: controller
+  newName: localhost:5000/dex-operator
+  newTag: latest
+- name: dex-operator
+  newName: container-registry.test.euc1.betsson.tech/techsson.docker.alpha/test/dex-operator
+  newTag: latest

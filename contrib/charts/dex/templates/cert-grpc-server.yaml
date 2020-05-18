@@ -1,0 +1,16 @@
+{{- if .Values.certs.grpc.create }}
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: {{ template "dex.fullname" . }}-grpc-server-cert
+  labels:
+{{ include "dex.labels" . | indent 4 }}
+spec:
+  secretName: {{ .Values.certs.grpc.server.secretName }}
+  issuerRef:
+    name: dex-grpc-cert-issuer
+    kind: Issuer
+  commonName: dex.{{ .Release.Namespace }}
+  dnsNames:
+  - dex.{{ .Release.Namespace }}
+{{- end }}
