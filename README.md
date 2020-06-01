@@ -29,7 +29,11 @@ certs:
 
 ## Images
 
+<<<<<<< HEAD
 Built images are pushed to: [quay.io/betsson-oss/dex-operator](https://quay.io/betsson-oss/dex-operator)
+=======
+Built imageas are pushed to: [quay.io/betsson-oss/dex-operator](quay.io/betsson-oss/dex-operator)
+>>>>>>> Update README
 
 ## Using dex-operator
 
