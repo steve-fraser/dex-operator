@@ -1,5 +1,7 @@
 # Dex-Operator
 
+Build status: ![Build](https://github.com/BetssonGroup/dex-operator/workflows/Build/badge.svg?branch=master)
+
 ## Background
 
 
