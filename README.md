@@ -3,7 +3,9 @@
 ![Build](https://github.com/BetssonGroup/dex-operator/workflows/Build/badge.svg?branch=master)
 
 ## Background
+In the default DEX installation on Kubernetes, clients are usually configured by adding static clients in the DEX secret containing the DEX config file. This adds complexity when adding oidc authentication to other applications in the cluster. 
 
+This small operator adds a `client`crd and by using the DEX GRPC api adds and manages dynamic clients. An application that needs oidc authentication can simply add the needed CRD during creation and use the dynamicly created oidc client in DEX.
 
 ## Installing
 
