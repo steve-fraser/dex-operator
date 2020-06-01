@@ -5,7 +5,7 @@
 
 ## Installing
 
-The operator currently requres `Certmanager` and Dex installed. Install the operator by running the `dex-operator` helm 3 chart in `contrib/charts/dex-operator`.
+The operator currently requires `Certmanager` and Dex installed. Install the operator by running the `dex-operator` helm 3 chart in `contrib/charts/dex-operator`.
 
 Install DEX using the official helm chart and set at least the following:
 
@@ -26,6 +26,10 @@ certs:
     server:
       secretName: dex-grpc-server-cert
 ```
+
+## Images
+
+Built images are pushed to: [quay.io/betsson-oss/dex-operator](https://quay.io/betsson-oss/dex-operator)
 
 ## Using dex-operator
 
