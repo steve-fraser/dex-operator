@@ -16,15 +16,18 @@ limitations under the License.
 
 package v1
 
+// +kubebuilder:validation:Required
+
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
-	PhaseCreating = "CREATING"
-	PhaseActive   = "ACTIVE"
-	PhaseFailed   = "FAILED"
-	PhaseDeleting = "DELETING"
+	PhaseCreating       = "CREATING"
+	PhaseActive         = "ACTIVE"
+	PhaseActiveDegraded = "ACTIVE (DEGRADED)"
+	PhaseFailed         = "FAILED"
+	PhaseDeleting       = "DELETING"
 )
 
 // ClientSpec defines the desired state of Client
@@ -34,6 +37,7 @@ type ClientSpec struct {
 	Name string `json:"name,omitempty"`
 
 	// +kubebuilder:validation:MinLength=2
+	// +kubebuilder:validation:Required
 	// The shared oidc secret
 	Secret string `json:"secret,omitempty"`
 
