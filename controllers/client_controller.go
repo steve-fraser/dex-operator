@@ -148,7 +148,25 @@ func (r *ClientReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			clientsCreated.Inc()
 		}
 	case oauth2v1.PhaseActive:
-		log.Info("Client active")
+		// If the client is active but in the reconcile loop it's being updated.
+		log.Info("Client update", "client ID", oauth2Client.Name)
+		err := r.DexClient.UpdateClient(
+			ctx,
+			oauth2Client.Name,
+			oauth2Client.Spec.RedirectURIs,
+			oauth2Client.Spec.TrustedPeers,
+			oauth2Client.Spec.Public,
+			oauth2Client.Spec.Name,
+			oauth2Client.Spec.LogoURL,
+		)
+		if err != nil {
+			log.Error(err, "Client update failed", "client", oauth2Client.Name)
+			oauth2Client.Status.State = oauth2v1.PhaseActiveDegraded
+			oauth2Client.Status.Message = err.Error()
+		} else {
+			log.Info("Client updated", "client ID", oauth2Client.Name)
+			r.Recorder.Eventf(oauth2Client, "Normal", "ClientUpdate", "client %s", oauth2Client.Name)
+		}
 	case oauth2v1.PhaseFailed:
 		log.Info("Client failed")
 	default:
