@@ -7,6 +7,42 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - list
+  - watch
+- apiGroups:
+  - dex.betssongroup.com
+  resources:
+  - albauths
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dex.betssongroup.com
+  resources:
+  - albauths/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - dex.betssongroup.com
   resources:
   - clients
@@ -26,3 +62,12 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - list
+  - patch
+  - update
+  - watch

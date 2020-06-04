@@ -18,7 +18,7 @@ package controllers
 import (
 	"context"
 
-	oauth2v1 "github.com/BetssonGroup/dex-operator/api/v1"
+	dexv1 "github.com/BetssonGroup/dex-operator/apis/dex/v1"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -27,6 +27,7 @@ import (
 )
 
 var _ = Context("Inside of a new namespace", func() {
+	defer GinkgoRecover()
 	ctx := context.TODO()
 	ns := SetupTest(ctx)
 	redirectURLs := make([]string, 1)
@@ -34,12 +35,12 @@ var _ = Context("Inside of a new namespace", func() {
 
 	Describe("when no existing resources exist", func() {
 		It("should create a new Client resource with the specified name", func() {
-			client := &oauth2v1.Client{
+			client := &dexv1.Client{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "testing-client",
 					Namespace: ns.Name,
 				},
-				Spec: oauth2v1.ClientSpec{
+				Spec: dexv1.ClientSpec{
 					Secret:       "xxx-xxx-xxx-xxx",
 					Name:         "Testing Client",
 					RedirectURIs: redirectURLs,

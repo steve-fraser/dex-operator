@@ -22,46 +22,47 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const (
-	PhaseCreating       = "CREATING"
-	PhaseActive         = "ACTIVE"
-	PhaseActiveDegraded = "ACTIVE (DEGRADED)"
-	PhaseFailed         = "FAILED"
-	PhaseDeleting       = "DELETING"
-)
-
 // ClientSpec defines the desired state of Client
 type ClientSpec struct {
-	// The name of the oidc config
 	// +kubebuilder:validation:MinLength=4
+
+	// The name of the oidc config
 	Name string `json:"name,omitempty"`
 
 	// +kubebuilder:validation:MinLength=2
 	// +kubebuilder:validation:Required
+
 	// The shared oidc secret
 	Secret string `json:"secret,omitempty"`
 
-	// Sets the public flag
 	// +optional
+
+	// Sets the public flag
 	Public bool `json:"public,omitempty"`
 
 	// Redirect URIs
 	RedirectURIs []string `json:"redirectURIs,omitempty"`
 
-	// Trusted Peers
 	// +optional
+
+	// Trusted Peers
 	TrustedPeers []string `json:"trustedPeers,omitempty"`
 
-	// LogoURL
 	// +optional
+
+	// LogoURL
 	LogoURL string `json:"logoURL,omitempty"`
 }
 
 // ClientStatus defines the observed state of Client
 type ClientStatus struct {
+
 	// +optional
+
 	State string `json:"state,omitempty"`
+
 	// +optional
+
 	Message string `json:"message,omitempty"`
 }
 

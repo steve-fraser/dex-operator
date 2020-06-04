@@ -42,7 +42,7 @@ test: generate fmt vet manifests
 
 # Build manager binary
 manager: generate fmt vet
-	go build -o bin/manager main.go
+	go build -o bin/dex-operator main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests
@@ -141,6 +141,9 @@ deploy-dex: deploy-prometheus-operator deploy-cert-manager
 	if ! helm list -n dex --deployed -q|grep -q dex; then \
 		cd contrib/charts/dex && helm install dex --namespace dex .;\
 	fi
+
+deploy-dex-operator:
+	
 
 refresh: docker-build docker-push
 	kubectl -n dex rollout restart deployment dex-operator-controller-manager

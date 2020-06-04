@@ -27,8 +27,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	oauth2v1 "github.com/BetssonGroup/dex-operator/api/v1"
-	"github.com/BetssonGroup/dex-operator/controllers"
+	dexv1 "github.com/BetssonGroup/dex-operator/apis/dex/v1"
+	dexcontroller "github.com/BetssonGroup/dex-operator/controllers/dex"
 	dexapi "github.com/BetssonGroup/dex-operator/pkg/dex"
 	// +kubebuilder:scaffold:imports
 )
@@ -40,8 +40,7 @@ var (
 
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
-
-	_ = oauth2v1.AddToScheme(scheme)
+	_ = dexv1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -91,7 +90,7 @@ func main() {
 		setupLog.Error(err, "unable to setup Dex grcp client")
 		os.Exit(1)
 	}
-	if err = (&controllers.ClientReconciler{
+	if err = (&dexcontroller.ClientReconciler{
 		Client:    mgr.GetClient(),
 		Log:       ctrl.Log.WithName("controllers").WithName("Client"),
 		Scheme:    mgr.GetScheme(),
@@ -101,7 +100,17 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Client")
 		os.Exit(1)
 	}
+	if err = (&dexcontroller.ALBAuthReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("ALBAuth"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ALBAuth")
+		os.Exit(1)
+	}
+	// Start the health endpoints
 	setupChecks(mgr)
+	setupLog.Info("started health check endpoints", "addr", healthAddr)
 	// +kubebuilder:scaffold:builder
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
