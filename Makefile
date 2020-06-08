@@ -1,7 +1,7 @@
 # Image URL to use all building/pushing image targets
 CRD_GROUP ?= dex.betssongroup.com
 IMG ?= "quay.io/betsson-oss/dex-operator"
-TAG=$(shell git symbolic-ref -q --short HEAD)
+TAG=$(shell git symbolic-ref -q --short HEAD||git rev-parse -q --short HEAD)
 GIT_SHA1=$(shell git rev-parse -q HEAD)
 BUILD_DATE=$(shell date +%FT%T%Z)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
@@ -42,7 +42,7 @@ test: generate fmt vet manifests
 
 # Build manager binary
 manager: generate fmt vet
-	go build -o bin/manager main.go
+	go build -o bin/dex-operator main.go
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet manifests
@@ -141,6 +141,9 @@ deploy-dex: deploy-prometheus-operator deploy-cert-manager
 	if ! helm list -n dex --deployed -q|grep -q dex; then \
 		cd contrib/charts/dex && helm install dex --namespace dex .;\
 	fi
+
+deploy-dex-operator:
+	
 
 refresh: docker-build docker-push
 	kubectl -n dex rollout restart deployment dex-operator-controller-manager

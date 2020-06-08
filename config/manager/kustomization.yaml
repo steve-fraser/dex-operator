@@ -5,9 +5,6 @@ kind: Kustomization
 images:
 - name: controller
   newName: localhost:5000/dex-operator
-  newTag: add-update-logic
-- name: dex-operator
-  newName: container-registry.test.euc1.betsson.tech/techsson.docker.alpha/test/dex-operator
-  newTag: latest
+  newTag: add-oauth-proxy-and-alb-ingress-secrets
 commonAnnotations:
-  app.kubernetes.io/version: add-update-logic
+  app.kubernetes.io/version: add-oauth-proxy-and-alb-ingress-secrets

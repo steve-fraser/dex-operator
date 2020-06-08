@@ -49,6 +49,7 @@ Selector labels
 {{- define "dex-operator.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "dex-operator.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: controller
 {{- end -}}
 
 {{/*

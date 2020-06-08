@@ -1,0 +1,9 @@
+apiVersion: dex.betssongroup.com/v1
+kind: ALBAuth
+metadata:
+  name: albauth-sample
+spec:
+  # Add fields here
+  ingress: test-alb-ingress
+  client: test-minimal-client
+  issuer: https://dex.fqdn

@@ -5,30 +5,41 @@ metadata:
     control-plane: controller-manager
   name: system
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: controller
+  namespace: system
+  labels:
+    app.kubernetes.io/name: dex-operator
+    app.kubernetes.io/instance: dex-operator
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: controller-manager
   namespace: system
   labels:
-    control-plane: controller-manager
+    app.kubernetes.io/component: controller
 spec:
   selector:
     matchLabels:
-      control-plane: controller-manager
-  replicas: 1
+      app.kubernetes.io/component: controller
+  replicas: 2
   template:
     metadata:
       labels:
-        control-plane: controller-manager
+        app.kubernetes.io/component: controller
     spec:
+      serviceAccountName: controller
       containers:
       - command:
-        - /manager
+        - /dex-operator
         args:
         - --enable-leader-election
         image: controller:latest
-        name: manager
+        imagePullPolicy: Always
+        name: operator
         resources:
           limits:
             cpu: 100m
@@ -39,17 +50,16 @@ spec:
         ports:
         - name: liveness-port
           containerPort: 9440
-          hostPort: 9440
         livenessProbe:
           httpGet:
             path: /healthz
             port: liveness-port
         volumeMounts:
-          - name: dex-grpc-client-cert
+          - name: grpc-client-cert
             mountPath: /etc/dex/tls
       terminationGracePeriodSeconds: 10
       volumes:
-      - name: dex-grpc-client-cert
+      - name: grpc-client-cert
         secret:
           defaultMode: 420
-          secretName: dex-grpc-server-cert
+          secretName: dex-operator-grpc-client-cert
