@@ -10,7 +10,7 @@ on:
 jobs:
   test-build-push:
     name: Test, Build and Push Dex-Operator
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
