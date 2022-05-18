@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dex-operator
+  annotations:
+    github.com/project-slug: BetssonGroup/dex-operator
+spec:
+  type: other
+  lifecycle: unknown
+  owner: platform-core
