@@ -5,7 +5,8 @@ TAG=$(shell git symbolic-ref -q --short HEAD||git rev-parse -q --short HEAD)
 GIT_SHA1=$(shell git rev-parse -q HEAD)
 BUILD_DATE=$(shell date +%FT%T%Z)
 # Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true"
+# CRD_OPTIONS ?= "crd:trivialVersions=true"
+CRD_OPTIONS ?= "crd"
 OS=$(shell go env GOOS)
 ARCH=$(shell go env GOARCH)
 

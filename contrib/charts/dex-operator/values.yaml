@@ -41,8 +41,6 @@ kubeRbacProxy:
 dexGRPC:
   host: dex
   port: 5557
-  ca:
-    secretName: dex-grpc-ca # The ca-cert created from the dex chart
 
 resources: 
   limits:

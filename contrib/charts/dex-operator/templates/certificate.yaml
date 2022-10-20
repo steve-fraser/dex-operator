@@ -1,4 +1,4 @@
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "dex-operator.fullname" . }}-grpc-client-cert
@@ -7,7 +7,7 @@ metadata:
 spec:
   secretName: {{ template "dex-operator.fullname" . }}-grpc-client-cert
   issuerRef:
-    name: {{ include "dex-operator.fullname" . }}-grpc-cert-issuer
+    name: dex-grpc-ca-issuer
     kind: Issuer
   commonName: {{ .Values.dexGRPC.host }}.{{ .Release.Namespace }}
   dnsNames:
