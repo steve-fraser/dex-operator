@@ -40,7 +40,7 @@ kubeRbacProxy:
 # Specify the DEX GRPC endpoint 
 dexGRPC:
   host: dex
-  port: 35000
+  port: 5557
   ca:
     secretName: dex-grpc-ca # The ca-cert created from the dex chart
 
